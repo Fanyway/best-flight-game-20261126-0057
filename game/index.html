@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<title>Langit Nusantara — 3D Flight Game</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="game">
+  <canvas id="scene"></canvas>
+
+  <div id="hud" class="hidden">
+    <div class="panel" id="flight-panel">
+      <div class="row"><span class="label">ALT</span><span class="value" id="hud-alt">0</span><span class="unit">m</span></div>
+      <div class="row"><span class="label">SPD</span><span class="value" id="hud-spd">0</span><span class="unit">km/h</span></div>
+      <div class="row"><span class="label">HDG</span><span class="value" id="hud-hdg">000°</span><span class="unit"></span></div>
+      <div class="row"><span class="label">THR</span><span class="value" id="hud-thr">0</span><span class="unit">%</span></div>
+    </div>
+
+    <div class="panel" id="mission-panel">
+      <div id="mission-name">Misi 1 — Cincin Langit</div>
+      <div id="mission-objective">Terbang melewati 5 cincin</div>
+      <div id="mission-progress">0 / 5</div>
+      <div id="mission-timer">00:00</div>
+    </div>
+
+    <div id="score-panel">SKOR <span id="hud-score">0</span></div>
+
+    <div class="panel" id="attitude-panel">
+      <canvas id="attitude" width="140" height="140"></canvas>
+      <div class="gauge-label">SIKAP</div>
+    </div>
+
+    <div class="panel" id="gauges-panel">
+      <div class="gauge">
+        <div class="gauge-label">BAHAN BAKAR</div>
+        <div class="bar"><div id="fuel-bar" class="fill fuel"></div></div>
+        <div class="gauge-value" id="fuel-value">100%</div>
+      </div>
+      <div class="gauge">
+        <div class="gauge-label">KERUSAKAN</div>
+        <div class="bar"><div id="damage-bar" class="fill damage"></div></div>
+        <div class="gauge-value" id="damage-value">0%</div>
+      </div>
+      <div class="gauge">
+        <div class="gauge-label">GAS</div>
+        <div class="bar vertical"><div id="throttle-bar" class="fill throttle"></div></div>
+      </div>
+    </div>
+
+    <div id="banner" class="hidden"></div>
+    <div id="crosshair">+</div>
+    <div id="hint">W/S gas · ←/→ belok · ↑/↓ naik-turun · Spasi boost · P jeda · R ulang · M suara</div>
+  </div>
+
+  <div id="screen-title" class="screen">
+    <h1>LANGIT NUSANTARA</h1>
+    <p class="tagline">Terbang di atas kepulauan Indonesia — lewati cincin, mendarat di landasan, antar kargo.</p>
+    <div class="controls-box">
+      <div><b>W / S</b> — tambah / kurangi gas</div>
+      <div><b>← → / A D</b> — miring &amp; belok</div>
+      <div><b>↑ ↓</b> — naik / turun</div>
+      <div><b>Spasi</b> — boost (boros bahan bakar)</div>
+      <div><b>P</b> — jeda &nbsp; <b>R</b> — ulang &nbsp; <b>M</b> — suara</div>
+      <div><b>Mouse</b> — tahan &amp; gerakkan untuk kemudi</div>
+    </div>
+    <button id="btn-start" class="big-btn">✈ MULAI TERBANG</button>
+    <p class="fine">Tiga misi: Cincin Langit · Mendarat di Pulau · Antar Kargo. Jaga bahan bakar — mendarat untuk isi ulang.</p>
+  </div>
+
+  <div id="screen-pause" class="screen hidden">
+    <h2>JEDA</h2>
+    <p>Pesawat menunggu di langit.</p>
+    <button id="btn-resume" class="big-btn">Lanjutkan (P)</button>
+    <button id="btn-restart-pause" class="btn">Ulang dari awal (R)</button>
+  </div>
+
+  <div id="screen-crash" class="screen hidden">
+    <h2>💥 PESAWAT JATUH</h2>
+    <p id="crash-reason">Kamu menabrak daratan.</p>
+    <p class="score-line">Skor: <span id="crash-score">0</span></p>
+    <button id="btn-retry" class="big-btn">Coba Lagi (R)</button>
+  </div>
+
+  <div id="screen-mission" class="screen hidden">
+    <h2 id="mission-done-title">MISI SELESAI!</h2>
+    <div id="mission-stars" class="stars">★★★</div>
+    <p id="mission-done-text">Bagus! Lanjut ke misi berikutnya.</p>
+    <p class="score-line">Skor: <span id="mission-score">0</span></p>
+    <button id="btn-next" class="big-btn">Misi Berikutnya →</button>
+  </div>
+
+  <div id="screen-complete" class="screen hidden">
+    <h2>🏆 SEMUA MISI SELESAI!</h2>
+    <div id="final-stars" class="stars">★★★</div>
+    <p class="score-line">Skor akhir: <span id="final-score">0</span></p>
+    <p id="final-note">Pilot Nusantara yang hebat!</p>
+    <button id="btn-again" class="big-btn">Terbang Lagi (R)</button>
+  </div>
+</div>
+
+<script src="vendor/three.min.js"></script>
+<script src="audio.js"></script>
+<script src="terrain.js"></script>
+<script src="plane.js"></script>
+<script src="missions.js"></script>
+<script src="hud.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

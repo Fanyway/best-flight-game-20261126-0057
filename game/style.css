@@ -1,0 +1,145 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { width: 100%; height: 100%; overflow: hidden; background: #0a1a2e; }
+
+body {
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  color: #eaf6ff;
+  user-select: none;
+}
+
+#game { position: relative; width: 100%; height: 100%; }
+#scene { display: block; width: 100%; height: 100%; }
+
+.hidden { display: none !important; }
+
+/* ---------- HUD ---------- */
+#hud { position: absolute; inset: 0; pointer-events: none; }
+
+.panel {
+  position: absolute;
+  background: rgba(6, 24, 40, 0.62);
+  border: 1px solid rgba(120, 220, 255, 0.45);
+  border-radius: 10px;
+  padding: 10px 14px;
+  box-shadow: 0 0 14px rgba(60, 190, 255, 0.25), inset 0 0 18px rgba(60, 190, 255, 0.08);
+  backdrop-filter: blur(2px);
+}
+
+#flight-panel { top: 14px; left: 14px; min-width: 168px; }
+#flight-panel .row {
+  display: flex; align-items: baseline; gap: 8px;
+  font-size: 15px; line-height: 1.5;
+}
+#flight-panel .label {
+  width: 38px; color: #8fd8ff; font-weight: 700; letter-spacing: 1px; font-size: 13px;
+}
+#flight-panel .value {
+  flex: 1; text-align: right;
+  font-size: 24px; font-weight: 800; color: #ffe9a8;
+  text-shadow: 0 0 10px rgba(255, 210, 90, 0.75);
+  font-variant-numeric: tabular-nums;
+}
+#flight-panel .unit { width: 30px; color: #9fd4ef; font-size: 12px; }
+
+#mission-panel { top: 14px; right: 14px; min-width: 230px; text-align: right; }
+#mission-name { color: #ffb347; font-weight: 800; font-size: 16px; letter-spacing: 0.5px; }
+#mission-objective { color: #d6efff; font-size: 13px; margin-top: 2px; }
+#mission-progress { color: #8fd8ff; font-weight: 700; font-size: 15px; margin-top: 4px; }
+#mission-timer { color: #ffe9a8; font-weight: 800; font-size: 20px; text-shadow: 0 0 10px rgba(255, 210, 90, 0.6); }
+
+#score-panel {
+  position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
+  background: rgba(6, 24, 40, 0.62);
+  border: 1px solid rgba(120, 220, 255, 0.45);
+  border-radius: 10px; padding: 8px 18px;
+  color: #8fd8ff; font-weight: 700; letter-spacing: 2px; font-size: 14px;
+  box-shadow: 0 0 14px rgba(60, 190, 255, 0.25);
+}
+#score-panel span {
+  color: #ffe9a8; font-size: 22px; font-weight: 800;
+  text-shadow: 0 0 10px rgba(255, 210, 90, 0.75);
+}
+
+#attitude-panel { left: 14px; bottom: 14px; padding: 8px; text-align: center; }
+#attitude { display: block; border-radius: 50%; box-shadow: 0 0 12px rgba(120, 220, 255, 0.5); }
+.gauge-label { color: #8fd8ff; font-size: 11px; font-weight: 700; letter-spacing: 2px; margin-top: 6px; }
+
+#gauges-panel { right: 14px; bottom: 14px; width: 210px; }
+#gauges-panel .gauge { margin-bottom: 10px; }
+#gauges-panel .gauge:last-child { margin-bottom: 0; }
+#gauges-panel .gauge-label { margin-top: 0; margin-bottom: 4px; }
+.gauge-value { text-align: right; color: #ffe9a8; font-weight: 700; font-size: 13px; margin-top: 2px; }
+.bar {
+  height: 12px; background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(120, 220, 255, 0.35); border-radius: 6px; overflow: hidden;
+}
+.bar .fill { height: 100%; width: 100%; transition: width 0.15s linear; }
+.fill.fuel { background: linear-gradient(90deg, #37d67a, #a5f2c0); box-shadow: 0 0 8px rgba(80, 230, 140, 0.8); }
+.fill.fuel.low { background: linear-gradient(90deg, #ff5d5d, #ffb347); }
+.fill.damage { background: linear-gradient(90deg, #ffb347, #ff5d5d); width: 0%; }
+.fill.throttle { background: linear-gradient(90deg, #3ec5ff, #8fd8ff); }
+.bar.vertical { height: 10px; }
+
+#banner {
+  position: absolute; top: 22%; left: 50%; transform: translateX(-50%);
+  font-size: 30px; font-weight: 900; color: #fff;
+  text-shadow: 0 0 18px rgba(255, 210, 90, 0.9), 0 2px 6px rgba(0, 0, 0, 0.6);
+  letter-spacing: 1px; text-align: center; white-space: nowrap;
+  animation: banner-pop 0.25s ease-out;
+}
+@keyframes banner-pop { from { transform: translateX(-50%) scale(0.85); opacity: 0; } to { transform: translateX(-50%) scale(1); opacity: 1; } }
+
+#crosshair {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  color: rgba(255, 255, 255, 0.55); font-size: 22px; font-weight: 300;
+  text-shadow: 0 0 6px rgba(0, 0, 0, 0.8);
+}
+
+#hint {
+  position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%);
+  color: rgba(220, 240, 255, 0.75); font-size: 12px; letter-spacing: 0.4px;
+  background: rgba(6, 24, 40, 0.45); padding: 5px 12px; border-radius: 8px;
+  white-space: nowrap;
+}
+
+/* ---------- Screens ---------- */
+.screen {
+  position: absolute; inset: 0; z-index: 10;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 16px; text-align: center;
+  background: linear-gradient(180deg, rgba(4, 18, 34, 0.55), rgba(4, 18, 34, 0.82));
+  padding: 24px;
+}
+.screen h1 {
+  font-size: 64px; font-weight: 900; letter-spacing: 6px; color: #ffe9a8;
+  text-shadow: 0 0 26px rgba(255, 200, 80, 0.65), 0 4px 0 rgba(180, 40, 40, 0.55);
+}
+.screen h2 { font-size: 42px; font-weight: 900; letter-spacing: 3px; color: #ffe9a8; text-shadow: 0 0 20px rgba(255, 200, 80, 0.6); }
+.tagline { font-size: 18px; color: #d6efff; max-width: 560px; line-height: 1.5; }
+.controls-box {
+  background: rgba(6, 24, 40, 0.6); border: 1px solid rgba(120, 220, 255, 0.35);
+  border-radius: 12px; padding: 14px 22px; font-size: 15px; line-height: 1.9; color: #cfeeff;
+}
+.controls-box b { color: #ffe9a8; }
+.big-btn {
+  pointer-events: auto; cursor: pointer;
+  font-size: 22px; font-weight: 800; letter-spacing: 1px;
+  color: #231303; background: linear-gradient(180deg, #ffd76a, #ff9d2e);
+  border: none; border-radius: 12px; padding: 15px 38px;
+  box-shadow: 0 6px 0 #b96a00, 0 10px 24px rgba(0, 0, 0, 0.45);
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+.big-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 0 #b96a00, 0 14px 28px rgba(0, 0, 0, 0.5); }
+.big-btn:active { transform: translateY(3px); box-shadow: 0 3px 0 #b96a00, 0 6px 14px rgba(0, 0, 0, 0.45); }
+.btn {
+  pointer-events: auto; cursor: pointer;
+  font-size: 15px; font-weight: 700; color: #d6efff;
+  background: rgba(120, 200, 255, 0.14); border: 1px solid rgba(120, 220, 255, 0.5);
+  border-radius: 9px; padding: 10px 22px;
+}
+.btn:hover { background: rgba(120, 200, 255, 0.28); }
+.fine { font-size: 13px; color: #9fc4dd; max-width: 520px; line-height: 1.5; }
+.stars { font-size: 44px; color: #ffd76a; text-shadow: 0 0 18px rgba(255, 210, 90, 0.9); letter-spacing: 8px; }
+.score-line { font-size: 20px; color: #d6efff; }
+.score-line span { color: #ffe9a8; font-weight: 800; font-size: 24px; }
